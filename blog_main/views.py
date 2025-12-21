@@ -12,7 +12,6 @@ def home(request):
         "updated_at"
     )
     context = {
-        "categories": categories,
         "featured_posts": featured_posts,
         "posts": posts,
     }
