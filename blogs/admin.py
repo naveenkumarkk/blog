@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Blog
+from .models import Category, Blog,SocialMedia,About
 
 
 class BlogAdmin(admin.ModelAdmin):
@@ -14,6 +14,18 @@ class BlogAdmin(admin.ModelAdmin):
     # We can make the fileds editable in the search list section
     list_editable = ('is_featured',)
 
+class SocialMediaAdmin(admin.ModelAdmin):
+    list_display = ('name','link','user','status','order')
+    search_fields = ('id','name','link','status')
+    list_display_links = ('link',)
+    list_editable = ('status','name','order')
+
+class AboutAdmin(admin.ModelAdmin):
+    list_display = ('user','description','created_at','updated_at')
+    list_editable = ('description',)
+
 # Register your models here.
 admin.site.register(Category)
 admin.site.register(Blog,BlogAdmin)
+admin.site.register(SocialMedia,SocialMediaAdmin)
+admin.site.register(About,AboutAdmin)
