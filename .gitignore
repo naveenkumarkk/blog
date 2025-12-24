@@ -3,3 +3,5 @@ blog_main/__init__.py
 /media
 /blogs/__pycache__
 /blogs/migrations/__pycache__
+/dashboards/__pycache__
+/dashboards/migrations/__pycache__
