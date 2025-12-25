@@ -32,5 +32,8 @@ urlpatterns = [
     path('register/',views.register,name='register'),
     path('login/',views.login,name='login'),
     path('logout/',views.logout,name='logout'),
-    path('dashboard/',include('dashboards.urls'))
+    path('dashboard/',include('dashboards.urls')),
+    # blog comments
+    path("comments/<int:blog_id>/", BlogsView.load_comments, name="load_comments"),
+    path("comments/add/<int:blog_id>/", BlogsView.add_comment, name="add_comment"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

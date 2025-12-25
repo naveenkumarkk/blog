@@ -66,4 +66,61 @@
                 </p>
             </footer>
         </body>
+        <script>
+            let loadBtn = document.getElementById("load-more-btn")
+            let container = document.getElementById("comments-container")
+
+            loadBtn.addEventListener("click",async function(){
+                let page = parseInt(loadBtn.dataset.page);
+                let blogId = loadBtn.dataset.blog;
+                let response = await fetch(`/comments/${blogId}/?page=${page}`);
+                let data = await response.json();
+                data.comments.forEach(c => {
+                    container.insertAdjacentHTML("beforeend",
+                    `<div class="card mt-1">
+                        <div class="card-body">
+                        <p class="card-text mb-0">${c.text}</p>
+                        <small>${c.created_at}</small>
+                        </div>
+                        </div>
+                        `
+                    );
+                });
+
+                if(!data.has_next){
+                    loadBtn.style.display = "none";
+                }
+                loadBtn.dataset.page = page + 1
+            });
+        </script>
+        {% comment %} Load comments if comments is present  {% endcomment %}
+        {% if single_blog %}
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("comment-form");
+
+            if (!form) {
+                console.error("comment-form not found");
+                return;
+            }
+
+            form.addEventListener("submit", async function (e) {
+                e.preventDefault();
+
+                const text = document.getElementById("comment-text").value;
+                
+                const res = await fetch("{% url 'add_comment' single_blog.id %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    body: new URLSearchParams({ comment: text })
+                });
+            const data = await res.json();
+                    console.log(data);
+                });
+            });
+        </script>
+        {% endif %}
     </html>

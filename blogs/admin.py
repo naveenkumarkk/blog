@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Blog,SocialMedia,About
+from .models import Category, Blog,SocialMedia,About,Comment
 
 
 class BlogAdmin(admin.ModelAdmin):
@@ -24,8 +24,10 @@ class AboutAdmin(admin.ModelAdmin):
     list_display = ('user','description','created_at','updated_at')
     list_editable = ('description',)
 
+
 # Register your models here.
 admin.site.register(Category)
 admin.site.register(Blog,BlogAdmin)
 admin.site.register(SocialMedia,SocialMediaAdmin)
 admin.site.register(About,AboutAdmin)
+admin.site.register(Comment)
