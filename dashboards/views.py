@@ -1,9 +1,10 @@
 from django.shortcuts import get_object_or_404, redirect, render
 from blogs.models import Blog, Category
 from django.contrib.auth.decorators import login_required
-from .forms import BlogPostForm, CategoryForm
+from .forms import BlogPostForm, CategoryForm,AddUserForm,EditUserForm
 from django.template.defaultfilters import slugify
-
+from django.contrib.auth.models import User
+from django.contrib.admin.views.decorators import staff_member_required
 
 @login_required(login_url="login")
 # Create your views here.
@@ -27,7 +28,8 @@ def add_category(request):
         if form.is_valid():
             form.save()
             return redirect("categories")
-    form = CategoryForm()
+    else:
+        form = CategoryForm()
     context = {
         "form": form,
     }
@@ -42,7 +44,8 @@ def edit_category(request, pk):
         if form.is_valid():
             form.save()
             return redirect("categories")
-    form = CategoryForm(instance=category)
+    else:
+        form = CategoryForm(instance=category)
     context = {"form": form, "category": category}
     return render(request, "dashboard/edit_category.html", context)
 
@@ -80,7 +83,8 @@ def add_post(request):
         else:
             print("Form is Invalid")
             print(form.errors)
-    form = BlogPostForm()
+    else:
+        form = BlogPostForm()
     context = {"form": form}
     return render(request, "dashboard/add_post.html", context)
 
@@ -96,7 +100,8 @@ def edit_post(request, pk):
             post.slug = slugify(title) + "-" + str(post.id)
             post = form.save()
             return redirect("posts")
-    form = BlogPostForm(instance=post)
+    else:
+        form = BlogPostForm(instance=post)
     context = {"form": form, "post": post}
     return render(request, "dashboard/edit_post.html", context)
 
@@ -106,3 +111,52 @@ def delete_post(request, pk):
     blog_post = get_object_or_404(Blog, pk=pk)
     blog_post.delete()
     return redirect("posts")
+
+
+@login_required(login_url="login")
+def users(request):
+    user_list = User.objects.all()
+    context = {
+        "user_list":user_list
+    }
+    return render(request, "dashboard/users.html",context)
+
+@login_required(login_url="login")
+def add_users(request):
+    if request.method == "POST":
+        form =  AddUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('users')
+    else:
+        form =  AddUserForm()
+    context = {
+        "form":form
+    }
+    return render(request, "dashboard/add_users.html",context)
+
+
+@login_required(login_url="login")
+def edit_user(request,pk):
+    user_object = get_object_or_404(User,pk=pk)
+    if request.method == "POST":
+        form = EditUserForm(request.POST,instance = user_object)
+        if form.is_valid():
+            form.save()
+            return redirect('users')
+        else:
+            print("Invalid Form")
+            print(form.errors)
+    else:
+        form = EditUserForm(instance=user_object)
+    context = {"form":form,"user_object":user_object}
+    return render(request, "dashboard/edit_user.html",context)
+
+
+@staff_member_required(login_url="login")
+def delete_user(request, pk):
+    user_list = get_object_or_404(User, pk=pk)
+    if user_list.is_superuser:
+        return redirect("users")
+    user_list.delete()
+    return redirect("users")

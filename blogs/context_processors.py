@@ -10,5 +10,5 @@ def get_social_links(request):
     return dict(social_media_links=social_media_links)
 
 def get_about(request):
-    about = About.objects.get()
+    about =  About.objects.first()
     return dict(about=about)
