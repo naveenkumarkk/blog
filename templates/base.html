@@ -6,121 +6,349 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Naveen's Blogs</title>
-        <link href="https://getbootstrap.com/docs/4.0/dist/css/bootstrap.min.css"
-              rel="stylesheet">
-        <link href="https://fonts.googleapis.com/css?family=Playfair+Display:700,900"
-              rel="stylesheet">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <title>Naveen Notes</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
         <link href="{% static 'css/blog.css' %}" rel="stylesheet">
+
+        <!-- Favicon -->
+        <link rel="icon" type="image/x-icon" href="{% static 'images/favicon_io/favicon.ico' %}">
+        <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon_io/favicon-32x32.png' %}">
+        <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon_io/favicon-16x16.png' %}">
+        <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon_io/apple-touch-icon.png' %}">
+        <link rel="manifest" href="{% static 'images/favicon_io/site.webmanifest' %}">
     </head>
     <body>
         <div class="container">
-            <header class="blog-header py-3">
+            <header class="blog-header p-3">
                 <div class="row flex-nowrap justify-content-between align-items-center">
-                    <div class="col-6 pt-1">
-                        <a class="blog-header-logo text-dark" href="/">Naveen's Blog</a>
+                    <div class="col-4 pt-1">
+                        <a class="blog-header-logo text-dark" href="/">Naveen Notes </a> 
+                        <picture>
+                        <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/270f_fe0f/512.webp" type="image/webp">
+                        <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/270f_fe0f/512.gif" alt="✏" width="32" height="32">
+                        </picture>
                     </div>
-                    <div class="col-3">
-                        <form action="{% url 'search' %}" method='GET'>
+                    <div class="col-4 text-center">
+                        <form action="{% url 'search' %}" method='GET' class="d-inline-block">
                             <div class="input-group">
                                 <input class="form-control"
                                        name="keyword"
                                        type="text"
                                        value="{{keyword}}"
-                                       placeholder="Enter search term..."
-                                       aria-label="Enter search term..."
+                                       placeholder="Search articles..."
+                                       aria-label="Search articles"
                                        id="button-search" />
-                                <button class="btn btn-warning" id="button-search" type="submit">Go!</button>
+                                <button class="btn btn-warning" id="button-search" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
                             </div>
                         </form>
                     </div>
-                    <div class="col-3 d-flex justify-content-end align-items-center">
+                    <div class="col-4 d-flex justify-content-end align-items-center">
                         {% if not user.is_authenticated %}
-
-                        {% comment %} <a class="btn btn-sm btn-warning" href="{% url 'login' %}">Login</a> &nbsp;
-                        <a class="btn btn-sm btn-outline-secondary" href="{%url 'register' %}">Register</a> {% endcomment %}
-                        
+                            <div class="d-flex align-items-center gap-3">
+                                <button id="theme-toggle" class="theme-toggle" title="Toggle theme">
+                                    <i class="fas fa-moon"></i>
+                                </button>
+                                {% comment %} <div class="d-flex gap-2">
+                                    <a class="btn btn-outline-light btn-sm" href="{% url 'login' %}">
+                                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                                    </a>
+                                    <a class="btn btn-light btn-sm" href="{% url 'register' %}">
+                                        <i class="fas fa-user-plus me-1"></i>Register
+                                    </a>
+                                </div> {% endcomment %}
+                            </div>
                         {% else %}
-                        <span><a href="{% url 'dashboard' %}">Dashboard</a></span>
-                        &emsp;
-                        <span><a class="btn btn-sm btn-danger" href="{% url 'logout' %}">Logout</a> </span>
+                            <div class="d-flex align-items-center gap-3">
+                                <button id="theme-toggle" class="theme-toggle" title="Toggle theme">
+                                    <i class="fas fa-moon"></i>
+                                </button>
+                                <span class="text-white">
+                                    <i class="fas fa-user me-1"></i>{{ user.username }}
+                                </span>
+                                <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-sm">
+                                    <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                                </a>
+                                <a class="btn btn-danger btn-sm" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                                </a>
+                            </div>
                         {% endif %}
                     </div>
                 </div>
             </header>
-            <div class="nav-scroller py-1 mb-2">
-                <nav class="nav d-flex justify-content-between">
+
+            <div class="nav-scroller py-1 mb-4">
+                <nav class="nav d-flex justify-content-center">
+                    <a class="nav-link active" href="{% url 'home' %}">
+                        <i class="fas fa-home me-1"></i>Home
+                    </a>
                     {% for category in categories %}
-                        <a class="p-2 text-muted"
-                           href="{% url 'posts_by_category' category.id %}">{{ category.category_name|capfirst }}</a>
+                        <a class="nav-link"
+                           href="{% url 'posts_by_category' category.id %}">
+                            <i class="fas fa-folder me-1"></i>{{ category.category_name|capfirst }}
+                        </a>
                     {% endfor %}
+                    <a class="nav-link" href="#about">
+                        <i class="fas fa-info-circle me-1"></i>About
+                    </a>
                 </nav>
             </div>
             {% comment %} Main  {% endcomment %}
             {% block content %}{% endblock %}
             {% comment %} Footer {% endcomment %}
             <footer class="blog-footer">
-                <p>
-                    Naveen's blog built with 💌 by <a href="#">Naveen Kumar</a>
-                </p>
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-4 mb-4">
+                            <h5 class="text-white mb-3">Naveen Notes</h5>
+                            <p class="mb-3">A place where ideas come to life through words. Sharing thoughts, experiences, and knowledge with the world.</p>
+                            <div class="d-flex gap-3">
+                                {% if social_media_links %}
+                                    {% for social_media in social_media_links %}
+                                        <a href="{{ social_media.link }}" target="_blank" class="text-white fs-5">
+                                            <i class="fab fa-{{ social_media.name|lower }}"></i>
+                                        </a>
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-lg-4 mb-4">
+                            <h5 class="text-white mb-3">Quick Links</h5>
+                            <ul class="list-unstyled">
+                                <li class="mb-2"><a href="{% url 'home' %}" class="text-white-50 text-decoration-none"><i class="fas fa-chevron-right me-2"></i>Home</a></li>
+                                {% for category in categories|slice:":5" %}
+                                    <li class="mb-2"><a href="{% url 'posts_by_category' category.id %}" class="text-white-50 text-decoration-none"><i class="fas fa-chevron-right me-2"></i>{{ category.category_name|capfirst }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <div class="col-lg-4 mb-4">
+                            <h5 class="text-white mb-3">Stay Connected</h5>
+                            <p class="text-white-50 mb-3">Subscribe to get the latest posts delivered to your inbox.</p>
+                            <div class="input-group">
+                                <input type="email" class="form-control" placeholder="Enter your email" aria-label="Email address">
+                                <button class="btn btn-warning" type="button">
+                                    <i class="fas fa-envelope"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <p class="mb-0 text-white-50">
+                                © 2025 Naveen Notes. Built with <i class="fas fa-heart text-danger"></i> by <a href="https://naveenpranesh.link/" class="text-warning text-decoration-none fw-semibold" target='_blank'>Naveen Kumar K.K.</a>
+                            </p>
+                        </div>
+                        <div class="col-md-6 text-md-end">
+                            <a href="#top" class="btn btn-outline-light btn-sm">
+                                <i class="fas fa-arrow-up me-1"></i>Back to Top
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </footer>
         </body>
-        <script>
-            let loadBtn = document.getElementById("load-more-btn")
-            let container = document.getElementById("comments-container")
-
-            loadBtn.addEventListener("click",async function(){
-                let page = parseInt(loadBtn.dataset.page);
-                let blogId = loadBtn.dataset.blog;
-                let response = await fetch(`/comments/${blogId}/?page=${page}`);
-                let data = await response.json();
-                data.comments.forEach(c => {
-                    container.insertAdjacentHTML("beforeend",
-                    `<div class="card mt-1">
-                        <div class="card-body">
-                        <p class="card-text mb-0">${c.text}</p>
-                        <small>${c.created_at}</small>
-                        </div>
-                        </div>
-                        `
-                    );
-                });
-
-                if(!data.has_next){
-                    loadBtn.style.display = "none";
-                }
-                loadBtn.dataset.page = page + 1
-            });
-        </script>
         {% comment %} Load comments if comments is present  {% endcomment %}
         {% if single_blog %}
         <script>
             document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("comment-form");
+                // Load initial comments
+                loadInitialComments();
 
-            if (!form) {
-                console.error("comment-form not found");
-                return;
-            }
+                const form = document.getElementById("comment-form");
+                const loadBtn = document.getElementById("load-more-btn");
+                const container = document.getElementById("comments-container");
 
-            form.addEventListener("submit", async function (e) {
-                e.preventDefault();
+                if (!form) {
+                    console.error("comment-form not found");
+                    return;
+                }
 
-                const text = document.getElementById("comment-text").value;
-                
-                const res = await fetch("{% url 'add_comment' single_blog.id %}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRFToken": "{{ csrf_token }}",
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    body: new URLSearchParams({ comment: text })
-                });
-            const data = await res.json();
+                // Handle comment form submission
+                form.addEventListener("submit", async function (e) {
+                    e.preventDefault();
+
+                    const text = document.getElementById("comment-text").value;
+
+                    const res = await fetch("{% url 'add_comment' single_blog.id %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": "{{ csrf_token }}",
+                            "Content-Type": "application/x-www-form-urlencoded"
+                        },
+                        body: new URLSearchParams({ comment: text })
+                    });
+                    const data = await res.json();
                     console.log(data);
+
+                    // Clear the form
+                    document.getElementById("comment-text").value = "";
+
+                    // Reload comments to show the new comment
+                    loadInitialComments();
                 });
+
+                // Handle load more button
+                if (loadBtn) {
+                    loadBtn.addEventListener("click", async function () {
+                        let page = parseInt(loadBtn.dataset.page);
+                        let blogId = loadBtn.dataset.blog;
+                        let response = await fetch(`/comments/${blogId}/?page=${page}`);
+                        let data = await response.json();
+
+                        data.comments.forEach(c => {
+                            container.insertAdjacentHTML("beforeend",
+                                `<div class="card mt-1">
+                                    <div class="card-body">
+                                        <p class="card-text mb-0">${c.text}</p>
+                                        <small class="text-muted">${c.created_at} ago</small>
+                                    </div>
+                                </div>`
+                            );
+                        });
+
+                        if (!data.has_next) {
+                            loadBtn.style.display = "none";
+                        }
+                        loadBtn.dataset.page = page + 1;
+                    });
+                }
             });
+
+            async function loadInitialComments() {
+                const loadBtn = document.getElementById("load-more-btn");
+                const container = document.getElementById("comments-container");
+
+                if (!loadBtn || !container) return;
+
+                try {
+                    let blogId = loadBtn.dataset.blog;
+                    let response = await fetch(`/comments/${blogId}/?page=1`);
+                    let data = await response.json();
+
+                    // Clear existing comments
+                    container.innerHTML = "";
+
+                    // Add comments to container
+                    data.comments.forEach(c => {
+                        container.insertAdjacentHTML("beforeend",
+                            `<div class="card mt-1">
+                                <div class="card-body">
+                                    <p class="card-text mb-0">${c.text}</p>
+                                    <small class="text-muted">${c.created_at} ago</small>
+                                </div>
+                            </div>`
+                        );
+                    });
+
+                    // Show load more button if there are more comments
+                    if (data.has_next) {
+                        loadBtn.classList.remove("d-none");
+                        loadBtn.dataset.page = 2; // Next page to load
+                    } else {
+                        loadBtn.classList.add("d-none");
+                    }
+                } catch (error) {
+                    console.error("Error loading initial comments:", error);
+                }
+            }
         </script>
         {% endif %}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+
+        <!-- Theme Toggle Script -->
+        <script>
+            // Theme management
+            class ThemeManager {
+                constructor() {
+                    this.themeToggle = null;
+                    this.currentTheme = localStorage.getItem('theme') || 'light';
+                    this.init();
+                }
+
+                init() {
+                    // Wait for DOM to be fully loaded
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', () => this.initializeTheme());
+                    } else {
+                        this.initializeTheme();
+                    }
+                }
+
+                initializeTheme() {
+                    this.themeToggle = document.getElementById('theme-toggle');
+
+                    if (!this.themeToggle) {
+                        console.error('Theme toggle button not found!');
+                        return;
+                    }
+
+                    // Set initial theme
+                    this.setTheme(this.currentTheme, false); // No transition on initial load
+
+                    // Add event listener
+                    this.themeToggle.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.toggleTheme();
+                    });
+
+                    // Listen for system theme changes
+                    try {
+                        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+                            if (!localStorage.getItem('theme')) {
+                                this.setTheme(e.matches ? 'dark' : 'light');
+                            }
+                        });
+                    } catch (e) {
+                        console.warn('System theme detection not supported');
+                    }
+                }
+
+                setTheme(theme, animate = true) {
+                    const html = document.documentElement;
+
+                    if (!animate) {
+                        html.style.transition = 'none';
+                    }
+
+                    html.setAttribute('data-theme', theme);
+                    this.currentTheme = theme;
+                    localStorage.setItem('theme', theme);
+
+                    // Update toggle button icon
+                    if (this.themeToggle) {
+                        const icon = this.themeToggle.querySelector('i');
+                        if (icon) {
+                            if (theme === 'dark') {
+                                icon.className = 'fas fa-sun';
+                                this.themeToggle.title = 'Switch to light mode';
+                            } else {
+                                icon.className = 'fas fa-moon';
+                                this.themeToggle.title = 'Switch to dark mode';
+                            }
+                        }
+                    }
+
+                    // Reset transition after a short delay
+                    if (!animate) {
+                        setTimeout(() => {
+                            html.style.transition = '';
+                        }, 50);
+                    }
+                }
+
+                toggleTheme() {
+                    const newTheme = this.currentTheme === 'light' ? 'dark' : 'light';
+                    this.setTheme(newTheme);
+                }
+            }
+
+            // Initialize theme manager
+            const themeManager = new ThemeManager();
+        </script>
+    </body>
     </html>
