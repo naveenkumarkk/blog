@@ -1,19 +1,35 @@
 {% extends "base.html" %}
-{% block content %}
 {% load crispy_forms_tags %}
-    <div class="row">
-        {% comment %} Left side {% endcomment %}
-        {% include "dashboard/sidebar.html" %}
-        {% comment %} Right Side {% endcomment %}
-        <div class="col-md-9">
-           <h2>Add Post</h2>
-           {% comment %} enctype='multipart/formdata' -> always added for file types {% endcomment %}
-           <form action="{% url 'add_post' %}" method="POST" enctype='multipart/form-data'>
-            {% csrf_token %} 
-            {{ form | crispy }}
-            <button type='submit' class='btn btn-warning'>Submit</button>
-           </form>
-           <br>
-        </div>
+{% block content %}
+{% load markdown_extras %}
+
+<div class="row">
+    {% include "dashboard/sidebar.html" %}
+
+    <div class="col-md-9">
+        <h2>Add Post</h2>
+
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ "hello"|shout }}
+            {{ form.title|as_crispy_field }}
+            {{ form.category|as_crispy_field }}
+            {{ form.feature_image|as_crispy_field }}
+            {{ form.short_description|as_crispy_field }}
+            {{ form.status|as_crispy_field }}
+            {{ form.is_featured|as_crispy_field }}
+
+            <label for="id_blog_body">Blog Body (Markdown)</label>
+            {{ form.blog_body }}
+
+            <h5 class="mt-3">Live Preview</h5>
+            <div id="preview" class="border p-3 bg-light blog-content"></div>
+
+            <button type="submit" class="btn btn-warning mt-3">
+                Save
+            </button>
+        </form>
     </div>
+</div>
+
 {% endblock %}

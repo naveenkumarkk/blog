@@ -29,7 +29,7 @@ class Blog(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     feature_image = models.ImageField(upload_to="uploads/%Y/%m/%d")
     short_description = models.TextField(max_length=500)
-    blog_body = models.TextField(max_length=2000)
+    blog_body = models.TextField(max_length=4000)
     # Staus needs to be dropdown
     status = models.CharField(
         max_length=20, choices=BLOG_STATUS_CHOICES, default="Draft"
@@ -37,7 +37,7 @@ class Blog(models.Model):
     is_featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
+    
     def __str__(self):
         return self.title
 
@@ -60,19 +60,65 @@ class SocialMedia(models.Model):
     def __str__(self):
         return self.name
 
+
 class About(models.Model):
     description = models.TextField(max_length=700)
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
 
 class Comment(models.Model):
     # user = models.ForeignKey(User,on_delete=models.CASCADE)
-    blog = models.ForeignKey(Blog,on_delete=models.CASCADE)
+    blog = models.ForeignKey(Blog, on_delete=models.CASCADE)
     comment = models.TextField(max_length=250)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.comment
+
+
+class NewsLetterUser(models.Model):
+    NEWSLETTER_USER_STATUS = (
+        ("Subscribed", "Subscribed"),
+        ("UnSubscribed", "UnSubscribed"),
+    )
+    email = models.EmailField(unique=True)
+    status = models.CharField(
+        max_length=15, choices=NEWSLETTER_USER_STATUS, default="Subscribed"
+    )
+    date_joined = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email
+
+
+class NewsLetter(models.Model):
+
+    STATUS_CHOICES = (("Draft", "Draft"), ("Published", "Published"))
+
+    body = models.TextField()
+    subject = models.CharField(max_length=255)
+    status = models.CharField(
+        max_length=15, choices=STATUS_CHOICES, default="Draft"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.subject
+
+
+class NewsLetterMail(models.Model):
+    EMAIL_STATUS_CHOICES = (("Pending", "Pending"),("Success", "Success"), ("Failed", "Failed"))
+    newsletter = models.ForeignKey(NewsLetter, on_delete=models.CASCADE,related_name="mail_log")
+    subscriber = models.ForeignKey(NewsLetterUser, on_delete=models.CASCADE,related_name="mail_logs")
+    status = models.CharField(max_length=15, choices=EMAIL_STATUS_CHOICES, default='Pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+    class Meta:
+        unique_together = ("newsletter", "subscriber")
+    
+    def __str__(self):
+        return f"{self.newletter.subject} -> {self.subscriber.email}"
+    

@@ -75,3 +75,4 @@ def search(request):
     )
     context = {"blogs": blog, "keyword": keyword}
     return render(request, "search.html", context)
+

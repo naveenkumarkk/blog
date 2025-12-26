@@ -5,6 +5,8 @@ from .forms import BlogPostForm, CategoryForm,AddUserForm,EditUserForm
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from django.contrib.admin.views.decorators import staff_member_required
+from django.http import JsonResponse
+import markdown
 
 @login_required(login_url="login")
 # Create your views here.
@@ -160,3 +162,15 @@ def delete_user(request, pk):
         return redirect("users")
     user_list.delete()
     return redirect("users")
+
+
+@login_required(login_url="login")
+def markdown_preview(request):   
+    if request.method == "POST":
+        markdown_text = request.POST.get('markdown', '')
+        html_output = markdown.markdown(
+            markdown_text,
+            extensions=["fenced_code", "codehilite", "tables", "nl2br", "sane_lists"]
+        )
+        return JsonResponse({'html': html_output})
+    return JsonResponse({'error': 'Invalid request'}, status=400)

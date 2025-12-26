@@ -350,5 +350,53 @@
             // Initialize theme manager
             const themeManager = new ThemeManager();
         </script>
+        <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script>
+           document.addEventListener("DOMContentLoaded", function() {
+                const textarea = document.getElementById("id_blog_body");
+                const preview = document.getElementById("preview");
+
+                if (textarea && preview) {
+                    function updatePreview() {
+                        const markdownText = textarea.value || "";
+                        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]');
+                        
+                        if (!csrfToken) {
+                            console.error('CSRF token not found');
+                            preview.innerHTML = marked.parse(markdownText);
+                            return;
+                        }
+                        
+                        // Use AJAX to get server-rendered markdown
+                        fetch('/dashboard/markdown-preview/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'X-CSRFToken': csrfToken.value
+                            },
+                            body: 'markdown=' + encodeURIComponent(markdownText)
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('HTTP error! status: ' + response.status);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            preview.innerHTML = data.html;
+                        })
+                        .catch(error => {
+                            console.error('Error updating preview:', error);
+                            // Fallback to client-side rendering
+                            preview.innerHTML = marked.parse(markdownText);
+                        });
+                    }
+
+                    updatePreview();  // initial render
+                    textarea.addEventListener("input", updatePreview);
+                }
+            });
+        </script>
+
     </body>
     </html>

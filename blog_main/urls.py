@@ -36,4 +36,9 @@ urlpatterns = [
     # blog comments
     path("comments/<int:blog_id>/", BlogsView.load_comments, name="load_comments"),
     path("comments/add/<int:blog_id>/", BlogsView.add_comment, name="add_comment"),
+    # News Letter
+    # path("newsletter/subscribe",BlogsView.subscribe_newsletter,name='newsletter_subscribe'),
+    # path("newsletter/send",BlogsView.newsletter_send,name='newsletter_send')
+
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
