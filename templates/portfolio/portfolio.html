@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="container mt-4">
+	<h3 class="mb-3">Portfolio Management</h3>
+
+	<!-- Tech Tools -->
+	<div class="card mb-4">
+		<div class="card-header bg-light"><strong>Tech Tools</strong></div>
+		<div class="card-body">
+			<form method="post" class="mb-3">
+				{% csrf_token %}
+				<input type="hidden" name="form_type" value="techtool" />
+				{{ tool_form|crispy }}
+				<button class="btn btn-primary btn-sm">Add Tool</button>
+			</form>
+			<div class="table-responsive">
+				<table class="table table-sm table-striped align-middle">
+					<thead><tr><th>Name</th><th>Icon</th><th>Color</th><th>Status</th><th>Actions</th></tr></thead>
+					<tbody>
+						{% for tool in tools %}
+							<tr>
+								<td>{{ tool.name }}</td>
+								<td>{{ tool.icon }}</td>
+								<td>{{ tool.color }}</td>
+								<td>{{ tool.status }}</td>
+								<td class="d-flex gap-2">
+									<a href="{% url 'portfolio_edit_tool' tool.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+									<form method="post" action="{% url 'portfolio_delete_tool' tool.id %}" onsubmit="return confirm('Delete this tool?');">
+										{% csrf_token %}
+										<button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+									</form>
+								</td>
+							</tr>
+						{% empty %}
+							<tr><td colspan="4" class="text-muted">No tools yet.</td></tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- Skill Categories -->
+	<div class="card mb-4">
+		<div class="card-header bg-light"><strong>Skill Categories</strong></div>
+		<div class="card-body">
+			<form method="post" class="mb-3">
+				{% csrf_token %}
+				<input type="hidden" name="form_type" value="skillcategory" />
+				{{ skill_form|crispy }}
+				<button class="btn btn-primary btn-sm">Add Category</button>
+			</form>
+			<div class="table-responsive">
+				<table class="table table-sm table-striped align-middle">
+					<thead><tr><th>Title</th><th>Skills</th><th>Actions</th></tr></thead>
+					<tbody>
+						{% for cat in skill_categories %}
+							<tr>
+								<td>{{ cat.title }}</td>
+								<td>
+									{% for s in cat.skills.all %}
+										<span class="badge bg-secondary me-1">{{ s.name }}</span>
+									{% empty %}
+										<span class="text-muted">None</span>
+									{% endfor %}
+								</td>
+								<td class="d-flex gap-2">
+									<a href="{% url 'portfolio_edit_skill_category' cat.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+									<form method="post" action="{% url 'portfolio_delete_skill_category' cat.id %}" onsubmit="return confirm('Delete this category?');">
+										{% csrf_token %}
+        
+										<button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+									</form>
+								</td>
+							</tr>
+						{% empty %}
+							<tr><td colspan="2" class="text-muted">No categories yet.</td></tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- Projects -->
+	<div class="card mb-4">
+		<div class="card-header bg-light"><strong>Projects</strong></div>
+		<div class="card-body">
+			<form method="post" class="mb-3">
+				{% csrf_token %}
+				<input type="hidden" name="form_type" value="project" />
+				{{ project_form|crispy }}
+				<button class="btn btn-primary btn-sm">Add Project</button>
+			</form>
+			<div class="table-responsive">
+				<table class="table table-sm table-striped align-middle">
+					<thead><tr><th>Title</th><th>Category</th><th>Role</th><th>Live Link</th><th>Tech Stack</th><th>Actions</th></tr></thead>
+					<tbody>
+						{% for proj in projects %}
+							<tr>
+								<td>{{ proj.title }}</td>
+								<td>{{ proj.category }}</td>
+								<td>{{ proj.role }}</td>
+								<td><a href="{{ proj.live_link }}" target="_blank">Visit</a></td>
+								<td>
+									{% for t in proj.tech_stack.all %}
+										<span class="badge bg-secondary me-1">{{ t.name }}</span>
+									{% empty %}
+										<span class="text-muted">None</span>
+									{% endfor %}
+								</td>
+								<td class="d-flex gap-2">
+									<a href="{% url 'portfolio_edit_project' proj.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+									<form method="post" action="{% url 'portfolio_delete_project' proj.id %}" onsubmit="return confirm('Delete this project?');">
+										{% csrf_token %}
+										<button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+									</form>
+								</td>
+							</tr>
+						{% empty %}
+							<tr><td colspan="5" class="text-muted">No projects yet.</td></tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- Experience -->
+	<div class="card mb-4">
+		<div class="card-header bg-light"><strong>Experience</strong></div>
+		<div class="card-body">
+			<form method="post" class="mb-3">
+				{% csrf_token %}
+				<input type="hidden" name="form_type" value="experience" />
+				{{ experience_form|crispy }}
+				<button class="btn btn-primary btn-sm">Add Experience</button>
+			</form>
+			<div class="table-responsive">
+				<table class="table table-sm table-striped align-middle">
+					<thead><tr><th>Company</th><th>Title</th><th>Period</th><th>Skills</th><th>Actions</th></tr></thead>
+					<tbody>
+						{% for exp in experiences %}
+							<tr>
+								<td>{{ exp.company }}</td>
+								<td>{{ exp.title }}</td>
+								<td>{{ exp.period }}</td>
+								<td>
+									{% for s in exp.skills.all %}
+										<span class="badge bg-secondary me-1">{{ s.name }}</span>
+									{% empty %}
+										<span class="text-muted">None</span>
+									{% endfor %}
+								</td>
+								<td class="d-flex gap-2">
+									<a href="{% url 'portfolio_edit_experience' exp.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+									<form method="post" action="{% url 'portfolio_delete_experience' exp.id %}" onsubmit="return confirm('Delete this experience?');">
+										{% csrf_token %}
+										<button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+									</form>
+								</td>
+							</tr>
+						{% empty %}
+							<tr><td colspan="4" class="text-muted">No experience yet.</td></tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+	<!-- Testimonials -->
+	<div class="card mb-4">
+		<div class="card-header bg-light"><strong>Testimonials</strong></div>
+		<div class="card-body">
+			<form method="post" class="mb-3">
+				{% csrf_token %}
+				<input type="hidden" name="form_type" value="testimonial" />
+				{{ testimonial_form|crispy }}
+				<button class="btn btn-primary btn-sm">Add Testimonial</button>
+			</form>
+			<div class="table-responsive">
+				<table class="table table-sm table-striped align-middle">
+					<thead><tr><th>Name</th><th>Position</th><th>Content</th><th>Actions</th></tr></thead>
+					<tbody>
+						{% for t in testimonials %}
+							<tr>
+								<td>{{ t.name }}</td>
+								<td>{{ t.position }}</td>
+								<td>{{ t.content|truncatewords:20 }}</td>
+								<td class="d-flex gap-2">
+									<a href="{% url 'portfolio_edit_testimonial' t.id %}" class="btn btn-sm btn-outline-primary">Edit</a>
+									<form method="post" action="{% url 'portfolio_delete_testimonial' t.id %}" onsubmit="return confirm('Delete this testimonial?');">
+										{% csrf_token %}
+										<button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+									</form>
+								</td>
+							</tr>
+						{% empty %}
+							<tr><td colspan="3" class="text-muted">No testimonials yet.</td></tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+
+</div>
+{% endblock %}

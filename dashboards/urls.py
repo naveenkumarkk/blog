@@ -21,5 +21,11 @@ urlpatterns = [
 
     # markdown preview
     path('markdown-preview/', views.markdown_preview, name='markdown_preview'),
+    
+    # newsletter
+    path('newsletter/', views.newsletter, name='newsletter'),
+    path('newsletter/edit/<int:pk>/', views.edit_newsletter, name='edit_newsletter'),
+    path('newsletter/delete/<int:pk>/', views.delete_newsletter, name='delete_newsletter'),
+    path('newsletter/send/<int:newsletter_id>/', views.send_email, name='send_newsletter'),
 
 ]

@@ -1,5 +1,5 @@
 from django import forms
-from blogs.models import Blog, Category
+from blogs.models import Blog, Category, NewsLetter
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth.models import User
 
@@ -58,3 +58,28 @@ class EditUserForm(UserChangeForm):
             "user_permissions",
             "date_joined",
         )
+
+class NewsLetterForm(forms.ModelForm):
+    class Meta:
+        model = NewsLetter
+        fields = ("subject", "body", "status")
+        widgets = {
+            "subject": forms.TextInput(
+                attrs={
+                    "class": "form-control",
+                    "placeholder": "Newsletter subject...",
+                }
+            ),
+            "body": forms.Textarea(
+                attrs={
+                    "class": "form-control",
+                    "rows": 10,
+                    "placeholder": "Write your newsletter content here...",
+                }
+            ),
+            "status": forms.Select(
+                attrs={
+                    "class": "form-control",
+                }
+            ),
+        }

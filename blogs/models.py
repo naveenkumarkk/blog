@@ -96,7 +96,7 @@ class NewsLetterUser(models.Model):
 
 class NewsLetter(models.Model):
 
-    STATUS_CHOICES = (("Draft", "Draft"), ("Published", "Published"))
+    STATUS_CHOICES = (("Draft", "Draft"), ("Published", "Published"), ("Sent", "Sent"))
 
     body = models.TextField()
     subject = models.CharField(max_length=255)

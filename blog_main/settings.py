@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -41,6 +42,8 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap4',
     'dashboards',
+    'django_q',
+    'portfolio'
 ]
 
 MIDDLEWARE = [
@@ -135,3 +138,28 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR /'media'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com" 
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True    
+EMAIL_HOST_USER = "naveenkumar.dev.io@gmail.com"
+EMAIL_HOST_PASSWORD = "dwyazblklhypttrz"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = os.environ.get(
+    "DJANGO_DEFAULT_FROM_EMAIL",
+    "no-reply@example.com"
+)
+
+Q_CLUSTER = {
+    "name": "blog",
+    "workers": 4,
+    "recycle": 500,
+    "timeout": 60,
+    "retry": 90,         
+    "queue_limit": 50,
+    "bulk": 10,
+    "orm": "default",
+    "ack_failures": True,
+}
+

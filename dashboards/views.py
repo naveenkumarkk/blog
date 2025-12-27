@@ -1,12 +1,16 @@
 from django.shortcuts import get_object_or_404, redirect, render
-from blogs.models import Blog, Category
+from blogs.models import Blog, Category,NewsLetter,NewsLetterUser
 from django.contrib.auth.decorators import login_required
-from .forms import BlogPostForm, CategoryForm,AddUserForm,EditUserForm
+from .forms import BlogPostForm, CategoryForm,AddUserForm,EditUserForm, NewsLetterForm
 from django.template.defaultfilters import slugify
 from django.contrib.auth.models import User
 from django.contrib.admin.views.decorators import staff_member_required
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 import markdown
+from django.views.decorators.http import require_GET,require_POST
+from django.core.mail import send_mail
+from django_q.tasks import async_task
+from django.db.models import Q 
 
 @login_required(login_url="login")
 # Create your views here.
@@ -174,3 +178,81 @@ def markdown_preview(request):
         )
         return JsonResponse({'html': html_output})
     return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+@require_POST
+def newsletter_send(request):
+    return 
+
+@require_GET
+def send_test_email(request):
+    send_mail(
+        subject="Hello from Django",
+        message="This is a test email sent from Django.",
+        from_email="naveenkumar.dev.io@gmail.com",
+        recipient_list=["jayakulandhaivel@gmail.com"],
+        fail_silently=False,
+    )
+    return HttpResponse("Email sent!")
+
+@require_POST
+def send_email(request,newsletter_id):
+    newsletter = get_object_or_404(NewsLetter,id=newsletter_id)
+    
+    async_task('dashboards.task.send_newsletter_email',newsletter.id)
+    return JsonResponse({
+        "success": True,
+        "message": "Newsletter queued successfully 🚀"
+    })
+
+
+@login_required(login_url="login")
+def newsletter(request):
+    if request.method == "POST":
+        form = NewsLetterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect("newsletter")
+    else:
+        form = NewsLetterForm()
+    
+    newsletters = (
+        NewsLetter.objects
+        .filter(status__in=["Draft", "Published"])
+        .order_by("-created_at")
+    )
+    context = {
+        "form": form,
+        "newsletters": newsletters,
+    }
+    return render(request, "dashboard/new_letter.html", context)
+
+
+@login_required(login_url="login")
+def edit_newsletter(request, pk):
+    newsletter_obj = get_object_or_404(NewsLetter, pk=pk)
+    if request.method == "POST":
+        form = NewsLetterForm(request.POST, instance=newsletter_obj)
+        if form.is_valid():
+            form.save()
+            return redirect("newsletter")
+    else:
+        form = NewsLetterForm(instance=newsletter_obj)
+    context = {
+        "form": form,
+        "newsletter": newsletter_obj,
+        "is_edit": True,
+    }
+    return render(request, "dashboard/edit_newsletter.html", context)
+
+
+@login_required(login_url="login")
+def delete_newsletter(request, pk):
+    newsletter_obj = get_object_or_404(NewsLetter, pk=pk)
+    if request.method == "POST":
+        newsletter_obj.delete()
+        return redirect("newsletter")
+    context = {
+        "newsletter": newsletter_obj,
+    }
+    return render(request, "dashboard/delete_newsletter.html", context)

@@ -20,64 +20,119 @@
         <link rel="manifest" href="{% static 'images/favicon_io/site.webmanifest' %}">
     </head>
     <body>
-        <div class="container">
-            <header class="blog-header p-3">
-                <div class="row flex-nowrap justify-content-between align-items-center">
-                    <div class="col-4 pt-1">
-                        <a class="blog-header-logo text-dark" href="/">Naveen Notes </a> 
-                        <picture>
-                        <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/270f_fe0f/512.webp" type="image/webp">
-                        <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/270f_fe0f/512.gif" alt="✏" width="32" height="32">
-                        </picture>
-                    </div>
-                    <div class="col-4 text-center">
-                        <form action="{% url 'search' %}" method='GET' class="d-inline-block">
-                            <div class="input-group">
-                                <input class="form-control"
-                                       name="keyword"
-                                       type="text"
-                                       value="{{keyword}}"
-                                       placeholder="Search articles..."
-                                       aria-label="Search articles"
-                                       id="button-search" />
-                                <button class="btn btn-warning" id="button-search" type="submit">
-                                    <i class="fas fa-search"></i>
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="col-4 d-flex justify-content-end align-items-center">
-                        {% if not user.is_authenticated %}
-                            <div class="d-flex align-items-center gap-3">
-                                <button id="theme-toggle" class="theme-toggle" title="Toggle theme">
+        <div class="container-fluid">
+            <header class="blog-header">
+                <!-- Mobile Layout -->
+                <div class="d-md-none">
+                    <div class="row align-items-center p-2">
+                        <div class="col-6">
+                            <a class="blog-header-logo text-dark" href="/">Naveen Notes </a> 
+                            <picture>
+                            <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/270f_fe0f/512.webp" type="image/webp">
+                            <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/270f_fe0f/512.gif" alt="✏" width="32" height="32">
+                            </picture>
+                        </div>
+                        <div class="col-6 text-end">
+                            {% if not user.is_authenticated %}
+                                <button id="theme-toggle-mobile" class="theme-toggle" title="Toggle theme">
                                     <i class="fas fa-moon"></i>
                                 </button>
-                                {% comment %} <div class="d-flex gap-2">
-                                    <a class="btn btn-outline-light btn-sm" href="{% url 'login' %}">
-                                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                            {% else %}
+                                <div class="d-flex align-items-center gap-2">
+                                    <button id="theme-toggle-mobile" class="theme-toggle" title="Toggle theme">
+                                        <i class="fas fa-moon"></i>
+                                    </button>
+                                    <span class="text-white small">
+                                        <i class="fas fa-user me-1"></i>{{ user.username }}
+                                    </span>
+                                    <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-sm">
+                                        <i class="fas fa-tachometer-alt"></i>
                                     </a>
-                                    <a class="btn btn-light btn-sm" href="{% url 'register' %}">
-                                        <i class="fas fa-user-plus me-1"></i>Register
+                                    <a class="btn btn-danger btn-sm" href="{% url 'logout' %}">
+                                        <i class="fas fa-sign-out-alt"></i>
                                     </a>
-                                </div> {% endcomment %}
-                            </div>
-                        {% else %}
-                            <div class="d-flex align-items-center gap-3">
-                                <button id="theme-toggle" class="theme-toggle" title="Toggle theme">
-                                    <i class="fas fa-moon"></i>
-                                </button>
-                                <span class="text-white">
-                                    <i class="fas fa-user me-1"></i>{{ user.username }}
-                                </span>
-                                <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-sm">
-                                    <i class="fas fa-tachometer-alt me-1"></i>Dashboard
-                                </a>
-                                <a class="btn btn-danger btn-sm" href="{% url 'logout' %}">
-                                    <i class="fas fa-sign-out-alt me-1"></i>Logout
-                                </a>
-                            </div>
-                        {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
+                    <div class="row mt-2 px-2">
+                        <div class="col-12 text-center">
+                            <form action="{% url 'search' %}" method='GET' class="d-inline-block">
+                                <div class="input-group">
+                                    <input class="form-control"
+                                           name="keyword"
+                                           type="text"
+                                           value="{{keyword}}"
+                                           placeholder="Search articles..."
+                                           aria-label="Search articles"
+                                           id="button-search-mobile" />
+                                    <button class="btn btn-warning" id="button-search-mobile" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Desktop Layout -->
+                <div class="d-none d-md-block">
+                    <div class="row justify-content-between align-items-center p-2">
+                        <div class="col-4 pt-1">
+                            <a class="blog-header-logo text-dark" href="/">Naveen Notes </a> 
+                            <picture>
+                            <source srcset="https://fonts.gstatic.com/s/e/notoemoji/latest/270f_fe0f/512.webp" type="image/webp">
+                            <img src="https://fonts.gstatic.com/s/e/notoemoji/latest/270f_fe0f/512.gif" alt="✏" width="32" height="32">
+                            </picture>
+                        </div>
+                        <div class="col-4 text-center">
+                            <form action="{% url 'search' %}" method='GET' class="d-inline-block">
+                                <div class="input-group">
+                                    <input class="form-control"
+                                           name="keyword"
+                                           type="text"
+                                           value="{{keyword}}"
+                                           placeholder="Search articles..."
+                                           aria-label="Search articles"
+                                           id="button-search" />
+                                    <button class="btn btn-warning" id="button-search" type="submit">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-4 d-flex justify-content-end align-items-center">
+                            {% if not user.is_authenticated %}
+                                <div class="d-flex align-items-center gap-3">
+                                    <button id="theme-toggle" class="theme-toggle" title="Toggle theme">
+                                        <i class="fas fa-moon"></i>
+                                    </button>
+                                    {% comment %} <div class="d-flex gap-2">
+                                        <a class="btn btn-outline-light btn-sm" href="{% url 'login' %}">
+                                            <i class="fas fa-sign-in-alt me-1"></i>Login
+                                        </a>
+                                        <a class="btn btn-light btn-sm" href="{% url 'register' %}">
+                                            <i class="fas fa-user-plus me-1"></i>Register
+                                        </a>
+                                    </div> {% endcomment %}
+                                </div>
+                            {% else %}
+                                <div class="d-flex align-items-center gap-3">
+                                    <button id="theme-toggle" class="theme-toggle" title="Toggle theme">
+                                        <i class="fas fa-moon"></i>
+                                    </button>
+                                    <span class="text-white">
+                                        <i class="fas fa-user me-1"></i>{{ user.username }}
+                                    </span>
+                                    <a href="{% url 'dashboard' %}" class="btn btn-outline-light btn-sm">
+                                        <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                                    </a>
+                                    <a class="btn btn-danger btn-sm" href="{% url 'logout' %}">
+                                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
                 </div>
             </header>
 
@@ -128,12 +183,20 @@
                         <div class="col-lg-4 mb-4">
                             <h5 class="text-white mb-3">Stay Connected</h5>
                             <p class="text-white-50 mb-3">Subscribe to get the latest posts delivered to your inbox.</p>
-                            <div class="input-group">
-                                <input type="email" class="form-control" placeholder="Enter your email" aria-label="Email address">
-                                <button class="btn btn-warning" type="button">
+                            <form id="newsletter-form" class="input-group">
+                                <input
+                                    type="email"
+                                    name="email"
+                                    id="newsletter-email"
+                                    class="form-control"
+                                    placeholder="Enter your email"
+                                    required
+                                >
+                                <button class="btn btn-warning" type="submit">
                                     <i class="fas fa-envelope"></i>
                                 </button>
-                            </div>
+                            </form>
+
                         </div>
                     </div>
                     <hr class="my-4" style="border-color: rgba(255,255,255,0.1);">
@@ -151,6 +214,10 @@
                     </div>
                 </div>
             </footer>
+            <div id="toast-container"
+                class="toast-container position-fixed bottom-0 end-0 p-3"
+                style="z-index: 1055;">
+            </div>
         </body>
         {% comment %} Load comments if comments is present  {% endcomment %}
         {% if single_blog %}
@@ -280,20 +347,25 @@
                 }
 
                 initializeTheme() {
-                    this.themeToggle = document.getElementById('theme-toggle');
+                    this.themeToggles = [
+                        document.getElementById('theme-toggle'),
+                        document.getElementById('theme-toggle-mobile')
+                    ].filter(btn => btn !== null);
 
-                    if (!this.themeToggle) {
-                        console.error('Theme toggle button not found!');
+                    if (this.themeToggles.length === 0) {
+                        console.error('No theme toggle buttons found!');
                         return;
                     }
 
                     // Set initial theme
                     this.setTheme(this.currentTheme, false); // No transition on initial load
 
-                    // Add event listener
-                    this.themeToggle.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        this.toggleTheme();
+                    // Add event listeners to all toggle buttons
+                    this.themeToggles.forEach(toggle => {
+                        toggle.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            this.toggleTheme();
+                        });
                     });
 
                     // Listen for system theme changes
@@ -319,19 +391,19 @@
                     this.currentTheme = theme;
                     localStorage.setItem('theme', theme);
 
-                    // Update toggle button icon
-                    if (this.themeToggle) {
-                        const icon = this.themeToggle.querySelector('i');
+                    // Update toggle button icons
+                    this.themeToggles.forEach(toggle => {
+                        const icon = toggle.querySelector('i');
                         if (icon) {
                             if (theme === 'dark') {
                                 icon.className = 'fas fa-sun';
-                                this.themeToggle.title = 'Switch to light mode';
+                                toggle.title = 'Switch to light mode';
                             } else {
                                 icon.className = 'fas fa-moon';
-                                this.themeToggle.title = 'Switch to dark mode';
+                                toggle.title = 'Switch to dark mode';
                             }
                         }
-                    }
+                    });
 
                     // Reset transition after a short delay
                     if (!animate) {
@@ -397,6 +469,61 @@
                 }
             });
         </script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const form = document.getElementById("newsletter-form");
+
+                if (!form) return;
+
+                form.addEventListener("submit", async function (e) {
+                    e.preventDefault();
+
+                    const emailInput = document.getElementById("newsletter-email");
+                    const email = emailInput.value;
+
+                    try {
+                        const response = await fetch("{% url 'subscribe_newsletter' %}", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRFToken": "{{ csrf_token }}",
+                                "Content-Type": "application/x-www-form-urlencoded"
+                            },
+                            body: new URLSearchParams({ email })
+                        });
+
+                        const data = await response.json();
+                        showToast(data.message, data.success ? "success" : "danger");
+
+                        if (data.success) {
+                            emailInput.value = "";
+                        }
+
+                    } catch (error) {
+                        showToast("Something went wrong. Try again.", "danger");
+                    }
+                });
+
+                function showToast(message, type) {
+                    const toastHTML = `
+                        <div class="toast align-items-center text-bg-${type} border-0" role="alert">
+                            <div class="d-flex">
+                                <div class="toast-body">${message}</div>
+                                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                            </div>
+                        </div>
+                    `;
+
+                    const container = document.getElementById("toast-container");
+                    container.insertAdjacentHTML("beforeend", toastHTML);
+
+                    const toastEl = container.lastElementChild;
+                    const toast = new bootstrap.Toast(toastEl, { delay: 3000 });
+                    toast.show();
+
+                    toastEl.addEventListener("hidden.bs.toast", () => toastEl.remove());
+                }
+            });
+            </script>
 
     </body>
     </html>

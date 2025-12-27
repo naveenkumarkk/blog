@@ -1,11 +1,14 @@
 from django.shortcuts import redirect, render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect,JsonResponse
-from .models import Blog, Category, Comment
+from .models import Blog, Category, Comment, NewsLetterUser
 from django.db.models import Q  # to use the complex operations as such OR operations
 from django.core.paginator import Paginator
 from django.views.decorators.http import require_GET,require_POST
 from django.utils.timesince import timesince
 from django.utils import timezone
+
+
+
 # Create your views here.
 def posts_by_category(request, category_id):
     # Fetch the posts that belongs to the category with the id category_id
@@ -44,7 +47,6 @@ def load_comments(request,blog_id):
 def add_comment(request,blog_id):
     blog = Blog.objects.get(id=blog_id)
     text = request.POST.get("comment")
-    print(text)
     if not text.strip():
         return JsonResponse({"error":"Empty Comment"},status=400)
 
@@ -75,4 +77,16 @@ def search(request):
     )
     context = {"blogs": blog, "keyword": keyword}
     return render(request, "search.html", context)
+
+@require_POST
+def subscribe_newsletter(request):
+    email = request.POST.get("email")
+    if not email:
+        return JsonResponse({"success": False, "message": "Email is required"}, status=400)
+
+    if NewsLetterUser.objects.filter(email=email).exists():
+        return JsonResponse({"success": False, "message": "You are already subscribed"})
+
+    NewsLetterUser.objects.create(email=email)
+    return JsonResponse({"success": True, "message": "Subscribed successfully 🎉"})
 

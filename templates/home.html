@@ -2,15 +2,15 @@
 {% block content %}
     {% for post in featured_posts %}
         {% if forloop.first %}
-            <div class="hero-section position-relative overflow-hidden p-5 text-center bg-dark text-white rounded-4 mb-5"
+            <div class="hero-section position-relative overflow-hidden py-4 px-3 text-center bg-dark text-white rounded-4 mb-5"
                  style="background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url({{ post.feature_image.url }});
                         background-size: cover;
                         background-position: center;
-                        min-height: 60vh;">
+                        min-height: 35vh;">
                 <div class="container py-5">
                     <div class="row justify-content-center">
                         <div class="col-lg-8">
-                            <h1 class="display-4 fw-bold mb-4 fade-in-up">{{ post.title }}</h1>
+                            <h1 class="fw-bold mb-3 fs-1 fs-md-2 fade-in-up">{{ post.title }}</h1>
                             <p class="lead mb-4 fade-in-up">{{ post.short_description | truncatewords:25 }}</p>
                             <a href="{% url 'blogs' post.slug %}"
                                class="btn btn-warning btn-lg px-4 py-3 fw-semibold text-uppercase">
