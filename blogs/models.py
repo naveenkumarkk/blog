@@ -120,5 +120,5 @@ class NewsLetterMail(models.Model):
         unique_together = ("newsletter", "subscriber")
     
     def __str__(self):
-        return f"{self.newletter.subject} -> {self.subscriber.email}"
+        return f"{self.newsletter.subject} -> {self.subscriber.email}"
     
