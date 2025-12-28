@@ -4,6 +4,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_GET,require_POST
 from django.core.mail import send_mail
+from django.views.decorators.csrf import csrf_exempt
+
 
 from .forms import (
     ExperienceForm,
@@ -355,6 +357,7 @@ def get_portfolio_detail(request):
 
     return JsonResponse({"success": True, "data": data})
 
+@csrf_exempt
 @require_POST
 def send_contact_form(request):
     client_name = request.POST.get('name')
