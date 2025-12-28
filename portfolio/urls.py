@@ -14,4 +14,5 @@ urlpatterns = [
     path('testimonial/<int:pk>/edit/', views.edit_testimonial, name='portfolio_edit_testimonial'),
     path('testimonial/<int:pk>/delete/', views.delete_testimonial, name='portfolio_delete_testimonial'),
     path('get', views.get_portfolio_detail, name='get_portfolio_detail'),
+    path('getInTouch',views.send_contact_form,name='send_contact_form')
 ]

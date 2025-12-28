@@ -2,6 +2,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse
+from django.views.decorators.http import require_GET,require_POST
+from django.core.mail import send_mail
 
 from .forms import (
     ExperienceForm,
@@ -10,7 +12,7 @@ from .forms import (
     TechToolForm,
     TestimonialForm,
 )
-from .models import Experience, Project, SkillCategory, TechTool, Testimonial
+from .models import Experience, Project, SkillCategory, TechTool, Testimonial,GetInTouch
 
 
 @login_required(login_url="login")
@@ -352,3 +354,30 @@ def get_portfolio_detail(request):
     }
 
     return JsonResponse({"success": True, "data": data})
+
+@require_POST
+def send_contact_form(request):
+    client_name = request.POST.get('name')
+    client_email = request.POST.get('email')
+    message = request.POST.get('message')
+    subject = request.POST.get('subject')
+
+    GetInTouch.objects.create(
+        client_name=client_name,
+        client_email=client_email,
+        message=message,
+        subject=subject
+    )
+
+    body = f"Email: {client_email}\n\n{message}"
+
+    send_mail(
+        subject=subject,
+        message=body,
+        from_email="naveenkumar.dev.io@gmail.com",
+        recipient_list=["jayakulandhaivel@gmail.com"],
+        fail_silently=False,
+    )
+
+    return JsonResponse({"success": True})
+

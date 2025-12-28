@@ -74,3 +74,12 @@ class Testimonial(models.Model):
 
     def __str__(self):
         return self.name
+    
+class GetInTouch(models.Model):
+    client_name = models.CharField(max_length=100,blank=False)
+    client_email = models.CharField(max_length=100,blank=False)
+    message =  models.TextField()
+    subject = models.CharField(max_length=300,blank=False)
+
+    def __str__(self):
+        return "{self.client_email} -> {self.subject}"
