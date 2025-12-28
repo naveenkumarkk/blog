@@ -275,13 +275,80 @@ def delete_testimonial(request, pk):
         },
     )
 
+def serialize_project(project):
+    return {
+        "id": project.id,
+        "title": project.title,
+        "category": project.category,
+        "description": project.description,
+        "live_link": project.live_link,
+        "role": project.role,
+        "image": project.image,
+        "tech_stack": [
+            serialize_techtool(tool)
+            for tool in project.tech_stack.filter(status="Active")
+        ],
+        "tools": [
+            serialize_techtool(tool)
+            for tool in project.tools.filter(status="Active")
+        ],
+    }
+
+def serialize_techtool(tool):
+    return {
+        "id": tool.id,
+        "name": tool.name,
+        "icon": tool.icon,
+        "color": tool.color,
+    }
+
+def serialize_experience(exp):
+    return {
+        "id": exp.id,
+        "company": exp.company,
+        "logo": exp.logo,
+        "title": exp.title,
+        "period": exp.period,
+        "description": exp.description,
+        "skills": [
+            serialize_techtool(tool)
+            for tool in exp.skills.filter(status="Active")
+        ],
+    }
+
+def serialize_skill_category(category):
+    return {
+        "id": category.id,
+        "title": category.title,
+        "skills": [
+            serialize_techtool(tool)
+            for tool in category.skills.filter(status="Active")
+        ],
+    }
 
 def get_portfolio_detail(request):
     data = {
-        "testimonials": list(Testimonial.objects.all().values()),
-        "experience": list(Experience.objects.all().values()),
-        "project": list(Project.objects.all().values()),
-        "skills": list(SkillCategory.objects.all().values()),
-        "techtool": list(TechTool.objects.filter(status='Active').values()),
+        "testimonials": list(
+            Testimonial.objects.values(
+                "id", "name", "position", "content", "image"
+            )
+        ),
+        "experience": [
+            serialize_experience(exp)
+            for exp in Experience.objects.all()
+        ],
+        "project": [
+            serialize_project(proj)
+            for proj in Project.objects.all()
+        ],
+        "skills": [
+            serialize_skill_category(cat)
+            for cat in SkillCategory.objects.all()
+        ],
+        "techtool": [
+            serialize_techtool(tool)
+            for tool in TechTool.objects.filter(status="Active")
+        ],
     }
+
     return JsonResponse({"success": True, "data": data})
