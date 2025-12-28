@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_GET,require_POST
 from django.core.mail import send_mail
 from django.views.decorators.csrf import csrf_exempt
+import json
 
 
 from .forms import (
@@ -356,31 +357,62 @@ def get_portfolio_detail(request):
     }
 
     return JsonResponse({"success": True, "data": data})
-
 @csrf_exempt
 @require_POST
 def send_contact_form(request):
-    client_name = request.POST.get('name')
-    client_email = request.POST.get('email')
-    message = request.POST.get('message')
-    subject = request.POST.get('subject')
+    try:
+        # Parse JSON body
+        data = json.loads(request.body.decode("utf-8"))
 
-    GetInTouch.objects.create(
-        client_name=client_name,
-        client_email=client_email,
-        message=message,
-        subject=subject
-    )
+        client_name = data.get("name")
+        client_email = data.get("email")
+        subject = data.get("subject")
+        message = data.get("message")
 
-    body = f"Email: {client_email}\n\n{message}"
+        # Basic validation
+        if not all([client_name, client_email, subject, message]):
+            return JsonResponse(
+                {"success": False, "error": "All fields are required"},
+                status=400
+            )
 
-    send_mail(
-        subject=subject,
-        message=body,
-        from_email="naveenkumar.dev.io@gmail.com",
-        recipient_list=["jayakulandhaivel@gmail.com"],
-        fail_silently=False,
-    )
+        # Save to DB
+        GetInTouch.objects.create(
+            client_name=client_name,
+            client_email=client_email,
+            subject=subject,
+            message=message
+        )
 
-    return JsonResponse({"success": True})
+        # Email body
+        body = f"""
+        From: {client_name}
+        Email: {client_email}
+
+        Message:
+        {message}
+        """
+
+        # Send email
+        send_mail(
+            subject=f"[Portfolio Contact] {subject}",
+            message=body,
+            from_email="naveenkumar.dev.io@gmail.com",
+            recipient_list=["jayakulandhaivel@gmail.com"],
+            fail_silently=False,
+        )
+
+        return JsonResponse({"success": True})
+
+    except json.JSONDecodeError:
+        return JsonResponse(
+            {"success": False, "error": "Invalid JSON"},
+            status=400
+        )
+
+    except Exception as e:
+        return JsonResponse(
+            {"success": False, "error": str(e)},
+            status=500
+        )
 
